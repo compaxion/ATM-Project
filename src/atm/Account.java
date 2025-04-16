@@ -1,0 +1,45 @@
+package atm;
+
+public class Account {
+    private String accountNumber;
+    private String ownerName;
+    private String pin;
+    private double balance;
+
+    public Account(String accountNumber, String ownerName, String pin, double balance) {
+        this.accountNumber = accountNumber;
+        this.ownerName = ownerName;
+        this.pin = pin;
+        this.balance = balance;
+
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public boolean validatePin(String inputPin) {
+        return this.pin.equals(inputPin);
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void deposit(double amount) {
+        balance += amount;
+    }
+
+    public boolean withdraw(double amount) {
+        if (balance >= amount) {
+            balance -= amount;
+            return true;
+        }
+        return false;
+    }
+}
+
