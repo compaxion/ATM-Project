@@ -1,4 +1,6 @@
 package atm;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Account {
     private String accountNumber;
@@ -12,6 +14,16 @@ public class Account {
         this.pin = pin;
         this.balance = balance;
 
+    }
+
+    private List<Transaction> transactionHistory = new ArrayList<>();
+
+    public void addTransactionHistory(Transaction transaction) {
+        transactionHistory.add(transaction);
+    }
+
+    public List<Transaction> getTransactionHistory() {
+        return transactionHistory;
     }
 
     public String getAccountNumber() {
@@ -28,6 +40,14 @@ public class Account {
 
     public double getBalance() {
         return balance;
+    }
+
+    public String getPin() {
+        return pin;
+    }
+
+    public void setPin(String newPin) {
+        this.pin = newPin;
     }
 
     public void deposit(double amount) {

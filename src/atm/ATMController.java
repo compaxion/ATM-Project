@@ -5,7 +5,7 @@ public class ATMController {
     private Account currentAccount;
     private TransactionManager transactionManager;
 
-    public ATMController(BankDatabase bankDatabase) {
+    public ATMController(BankDatabase bankDatabase, TransactionManager transactionManager) {
         this.bankDatabase = bankDatabase;
         this.transactionManager = transactionManager;
         this.currentAccount = null;
@@ -21,6 +21,14 @@ public class ATMController {
 
     public void logout() {
         currentAccount = null;
+    }
+
+    public boolean changePin(String oldPin, String newPin) {
+        if (currentAccount != null && currentAccount.validatePin(oldPin)) {
+            currentAccount.setPin(newPin);
+            return true;
+        }
+        return false;
     }
 
     public double getBalance() {

@@ -2,14 +2,15 @@ package atm;
 
 public class Main {
     public static void main(String[] args) {
-        BankDatabase db = new BankDatabase();
-        Account acc = new Account("123456", "Ahmet", "0000", 1000);
-        db.addAccount(acc);
+        //Load existing accounts
+        BankDatabase bankDatabase = new BankDatabase();
+        bankDatabase.loadAccountsFromFile("accounts.txt");
 
-        boolean login = db.validateLogin("123456", "0100");
-        System.out.println("Login success: " + login);
+        String newAccountNumber = bankDatabase.generateUniqueAccountNumber();
+        String newPin = bankDatabase.generateRandomPin();
+        Account newAccount = new Account(newAccountNumber,"newRandUser",newPin,1200.0);
+        bankDatabase.saveAccountToFile(newAccount,"accounts.txt");
 
-        acc.deposit(200);
-        System.out.println("Balance: " + acc.getBalance());
+        System.out.println("New account created : " + newAccountNumber + " Pin : " + newPin);
     }
 }
