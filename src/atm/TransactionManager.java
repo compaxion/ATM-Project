@@ -42,8 +42,17 @@ public class TransactionManager {
                         boolean success = fromAccount.withdraw(transaction.getAmount());
                         if (success) {
                             toAccount.deposit(transaction.getAmount());
+
                             fromAccount.addTransactionHistory(transaction);
-                            toAccount.addTransactionHistory(transaction);
+
+                            Transaction received = new Transaction(
+                                    "receive",
+                                    transaction.getAmount(),
+                                    transaction.getFromAccount(),
+                                    transaction.getToAccount()
+                            );
+
+                            toAccount.addTransactionHistory(received);
                         }
                     }
                     break;

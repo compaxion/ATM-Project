@@ -7,7 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.BufferedWriter;
 import java.util.Random;
-import java.util.Set;
+import java.util.Map;
 
 public class BankDatabase {
 
@@ -68,6 +68,22 @@ public class BankDatabase {
             writer.newLine();
         } catch (IOException e) {
             System.out.println("Error saving account: " + e.getMessage());
+        }
+    }
+
+    public void saveAllAccountsToFile(String filename) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, false))) { // false = overwrite
+            for (Map.Entry<String, Account> entry : accounts.entrySet()) {
+                Account account = entry.getValue();
+                String accountData = account.getAccountNumber() + ","
+                        + account.getOwnerName() + ","
+                        + account.getPin() + ","
+                        + account.getBalance();
+                writer.write(accountData);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Error saving all accounts: " + e.getMessage());
         }
     }
 
