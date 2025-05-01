@@ -8,8 +8,8 @@ public class Main {
 
         String newAccountNumber = bankDatabase.generateUniqueAccountNumber();
         String newPin = bankDatabase.generateRandomPin();
-        Account newAccount = new Account(newAccountNumber,"newRandUser",newPin,1200.0);
-        bankDatabase.saveAccountToFile(newAccount,"accounts.txt");
+        Account newAccount11 = new Account(newAccountNumber,"newRandUser",newPin,3131.0);
+        bankDatabase.saveAccountToFile(newAccount11,"accounts.txt");
 
         System.out.println("New account created : " + newAccountNumber + " Pin : " + newPin);
     }

@@ -1,26 +1,18 @@
 package gui;
 
-import atm.Transaction;
 import atm.ATMController;
+import atm.Transaction;
 
-import java.util.List;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
-public class MainMenuScreen extends JFrame {
+public class MainMenuScreen extends JFrame implements ActionListener {
 
     private ATMController atmController;
-
-    private JLabel ownerNameLabel;
-    private JButton checkBalanceButton;
-    private JButton depositButton;
-    private JButton withdrawButton;
-    private JButton transferButton;
-    private JButton transactionHistoryButton;
-    private JButton changePinButton;
-    private JButton logoutButton;
+    private JButton checkBalanceButton, depositButton, withdrawButton, transferButton, changePinButton, transactionHistoryButton, logoutButton;
 
     public MainMenuScreen(ATMController atmController) {
         this.atmController = atmController;
@@ -28,119 +20,68 @@ public class MainMenuScreen extends JFrame {
     }
 
     private void initializeUI() {
-        setTitle("ATM Main Menu");
-        setSize(450, 500);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
-        getContentPane().setBackground(new Color(240, 248, 255)); // Light blue background
+        setTitle("A.T.M.");
+        setSize(900, 900);
+        setLocation(300, 0);
+        setLayout(null);
 
-        ownerNameLabel = new JLabel("Welcome, " + atmController.getCurrentUserName() + "!", SwingConstants.CENTER);
-        ownerNameLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
-        ownerNameLabel.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
-        add(ownerNameLabel, BorderLayout.NORTH);
+        ImageIcon bgIcon = new ImageIcon(ClassLoader.getSystemResource("icons/atm.jpg"));
+        Image img = bgIcon.getImage().getScaledInstance(900, 900, Image.SCALE_DEFAULT);
+        JLabel background = new JLabel(new ImageIcon(img));
+        background.setBounds(0, 0, 900, 900);
+        add(background);
 
-        JPanel centerPanel = new JPanel(new GridLayout(6, 1, 10, 10)); // 6 rows, 1 column
-        centerPanel.setBackground(new Color(240, 248, 255));
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(15, 15, 15, 15);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridx = 0;
+        JLabel title2 = new JLabel("Welcome, " + atmController.getCurrentUserName());
+        title2.setBounds(260, 220, 600, 35);
+        title2.setForeground(Color.WHITE);
+        title2.setFont(new Font("System", Font.BOLD, 16));
+        background.add(title2);
 
         checkBalanceButton = new JButton("Check Balance");
         depositButton = new JButton("Deposit");
         withdrawButton = new JButton("Withdraw");
         transferButton = new JButton("Transfer");
-        transactionHistoryButton = new JButton("Transaction History");
         changePinButton = new JButton("Change PIN");
-        logoutButton = new JButton("Logout");
+        transactionHistoryButton = new JButton("Transaction History");
+        logoutButton = new JButton("Exit");
 
-        JButton[] buttons = {checkBalanceButton, depositButton, withdrawButton, transferButton, transactionHistoryButton, changePinButton, logoutButton};
+        JButton[] buttons = {checkBalanceButton, depositButton, withdrawButton, transferButton, changePinButton, transactionHistoryButton, logoutButton};
+        int[] yPositions = {295, 330, 365, 400, 295, 330, 365};
+        int[] xPositions = {170, 170, 170, 170, 375, 375, 375};
 
-        Font buttonFont = new Font("SansSerif", Font.BOLD, 16);
-
-        for (JButton button : buttons) {
-            button.setFont(buttonFont);
-            button.setPreferredSize(new Dimension(200, 50));
-            centerPanel.add(button);
+        for (int i = 0; i < buttons.length; i++) {
+            JButton button = buttons[i];
+            button.setBounds(xPositions[i], yPositions[i], 150, 30);
+            button.addActionListener(this);
+            background.add(button);
         }
 
-        add(centerPanel, BorderLayout.CENTER);
-
-        // Action Listeners
-        checkBalanceButton.addActionListener(new CheckBalanceListener());
-
-        depositButton.addActionListener(new DepositListener());
-
-        withdrawButton.addActionListener(new WithdrawListener());
-
-        transferButton.addActionListener(new TransferListener());
-
-        transactionHistoryButton.addActionListener(e -> {
-            List<Transaction> history = atmController.getCurrentTransactionHistory();
-            if (history.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "No transactions this session.");
-            } else {
-                StringBuilder sb = new StringBuilder("🧾 Transaction History 🧾\n\n");
-                for (Transaction t : history) {
-                    sb.append("Type: ").append(t.getType()).append("\n")
-                            .append("Amount: $").append(t.getAmount()).append("\n");
-
-                    if (t.getType().equals("transfer")) {
-                        sb.append("To: ").append(t.getToAccount()).append("\n");
-                    } else if (t.getType().equals("receive")) {
-                        sb.append("From: ").append(t.getFromAccount()).append("\n");
-                    }
-
-                    sb.append("-----\n");
-                }
-                JOptionPane.showMessageDialog(null, sb.toString(), "Session Transaction History", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-
-        changePinButton.addActionListener(new ChangePinListener());
-
-        logoutButton.addActionListener(e -> {
-            atmController.logout();
-            JOptionPane.showMessageDialog(null, "Logged out successfully!");
-            dispose(); // Close Main Menu
-            new LoginScreen().setVisible(true); // Open Login screen again
-        });
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
     }
 
-    //Button Action Listeners
-
-    private class CheckBalanceListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == checkBalanceButton) {
             double balance = atmController.getBalance();
-            JOptionPane.showMessageDialog(null, "Your Current Balance: $" + balance);
-        }
-    }
+            JOptionPane.showMessageDialog(this, "Your Current Balance: $" + balance);
 
-    private class DepositListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            String amountStr = JOptionPane.showInputDialog("Enter amount to deposit:");
+        } else if (e.getSource() == depositButton) {
+            String amountStr = JOptionPane.showInputDialog(this, "Enter amount to deposit:");
             if (amountStr != null) {
                 try {
                     double amount = Double.parseDouble(amountStr);
-                    boolean success = atmController.deposit(amount); // Let backend handle everything
+                    boolean success = atmController.deposit(amount);
                     if (success) {
                         showTransactionReceipt("Deposit", amount, atmController.getCurrentAccountNumber(), null);
                     }
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Invalid amount!", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Invalid amount!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        }
-    }
 
-    private class WithdrawListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            String amountStr = JOptionPane.showInputDialog("Enter amount to withdraw:");
+        } else if (e.getSource() == withdrawButton) {
+            String amountStr = JOptionPane.showInputDialog(this, "Enter amount to withdraw:");
             if (amountStr != null) {
                 try {
                     double amount = Double.parseDouble(amountStr);
@@ -149,18 +90,13 @@ public class MainMenuScreen extends JFrame {
                         showTransactionReceipt("Withdraw", amount, atmController.getCurrentAccountNumber(), null);
                     }
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Invalid amount!", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Invalid amount!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        }
-    }
 
-
-    private class TransferListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            String toAccount = JOptionPane.showInputDialog("Enter destination account number:");
-            String amountStr = JOptionPane.showInputDialog("Enter amount to transfer:");
+        } else if (e.getSource() == transferButton) {
+            String toAccount = JOptionPane.showInputDialog(this, "Enter destination account number:");
+            String amountStr = JOptionPane.showInputDialog(this, "Enter amount to transfer:");
             if (toAccount != null && amountStr != null) {
                 try {
                     double amount = Double.parseDouble(amountStr);
@@ -169,31 +105,50 @@ public class MainMenuScreen extends JFrame {
                         showTransactionReceipt("Transfer", amount, atmController.getCurrentAccountNumber(), toAccount);
                     }
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Invalid amount!", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Invalid amount!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
-        }
-    }
 
-
-    private class ChangePinListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            String oldPin = JOptionPane.showInputDialog("Enter your current PIN:");
-            String newPin = JOptionPane.showInputDialog("Enter your new PIN:");
+        } else if (e.getSource() == changePinButton) {
+            String oldPin = JOptionPane.showInputDialog(this, "Enter your current PIN:");
+            String newPin = JOptionPane.showInputDialog(this, "Enter your new PIN:");
 
             if (oldPin != null && newPin != null) {
                 boolean success = atmController.changePin(oldPin, newPin);
                 if (success) {
-                    JOptionPane.showMessageDialog(null, "PIN changed successfully! Please re-login with your new PIN.");
+                    JOptionPane.showMessageDialog(this, "PIN changed successfully! Please re-login.");
                     atmController.saveAccounts();
                     atmController.logout();
                     dispose();
                     new LoginScreen().setVisible(true);
                 } else {
-                    JOptionPane.showMessageDialog(null, "Incorrect old PIN. Try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Incorrect old PIN.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
+
+        } else if (e.getSource() == transactionHistoryButton) {
+            List<Transaction> history = atmController.getCurrentTransactionHistory();
+            if (history.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "No transactions this session.");
+            } else {
+                StringBuilder sb = new StringBuilder("🧾 Transaction History 🧾\n\n");
+                for (Transaction t : history) {
+                    sb.append("Type: ").append(t.getType()).append("\n")
+                            .append("Amount: $").append(t.getAmount()).append("\n");
+                    if (t.getType().equals("transfer")) {
+                        sb.append("To: ").append(t.getToAccount()).append("\n");
+                    } else if (t.getType().equals("receive")) {
+                        sb.append("From: ").append(t.getFromAccount()).append("\n");
+                    }
+                    sb.append("-----\n");
+                }
+                JOptionPane.showMessageDialog(this, sb.toString(), "Session Transaction History", JOptionPane.INFORMATION_MESSAGE);
+            }
+
+        } else if (e.getSource() == logoutButton) {
+            JOptionPane.showMessageDialog(this, "Thank you for using our ATM!");
+            setVisible(false);
+            new LoginScreen().setVisible(true);
         }
     }
 
@@ -214,4 +169,8 @@ public class MainMenuScreen extends JFrame {
         JOptionPane.showMessageDialog(this, receipt.toString(), "Transaction Receipt", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    public static void main(String[] args) {
+        // for testing independently
+        new MainMenuScreen(null);
+    }
 }

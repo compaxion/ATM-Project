@@ -9,12 +9,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class LoginScreen extends JFrame {
+public class LoginScreen extends JFrame implements ActionListener {
 
-    private JTextField accountNumberField;
-    private JPasswordField pinField;
-    private JButton loginButton;
-    private JButton exitButton;
+    private JTextField cardTextField;
+    private JPasswordField pinTextField;
+    private JButton loginButton, clearButton, exitButton;
 
     private ATMController atmController; // Backend connection
 
@@ -24,7 +23,6 @@ public class LoginScreen extends JFrame {
     }
 
     private void initializeBackend() {
-        // Set up backend objects
         BankDatabase bankDatabase = new BankDatabase();
         bankDatabase.loadAccountsFromFile("accounts.txt");
 
@@ -34,94 +32,109 @@ public class LoginScreen extends JFrame {
 
     private void initializeUI() {
         setTitle("ATM Login");
-        setSize(500, 350);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
+        setLayout(null);
+        getContentPane().setBackground(Color.WHITE);
 
-        // Set a background color
-        getContentPane().setBackground(new Color(240, 248, 255)); // Light blue-ish background
+        ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icons/logo.jpg"));
+        Image i2 = i1.getImage().getScaledInstance(100, 100, Image.SCALE_DEFAULT);
+        JLabel label = new JLabel(new ImageIcon(i2));
+        label.setBounds(70, 10, 100, 100);
+        add(label);
 
-        // Center panel for input fields
-        JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new GridBagLayout());
-        centerPanel.setBackground(new Color(240, 248, 255)); // Match background
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10); // Padding around components
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        JLabel title = new JLabel("WELCOME TO ATM");
+        title.setFont(new Font("Osward", Font.BOLD, 38));
+        title.setBounds(200, 40, 400, 40);
+        add(title);
 
-        JLabel accountLabel = new JLabel("Account Number:");
-        accountLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        centerPanel.add(accountLabel, gbc);
+        JLabel accountLabel = new JLabel("Account ID:");
+        accountLabel.setFont(new Font("Raleway", Font.BOLD, 28));
+        accountLabel.setBounds(100, 150, 200, 40);
+        add(accountLabel);
 
-        accountNumberField = new JTextField();
-        accountNumberField.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        accountNumberField.setPreferredSize(new Dimension(200, 40));
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        centerPanel.add(accountNumberField, gbc);
+        cardTextField = new JTextField();
+        cardTextField.setBounds(300, 150, 200, 30);
+        cardTextField.setFont(new Font("Arial", Font.BOLD, 14));
+        cardTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent e) {
+                if (cardTextField.getText().length() >= 4 || !Character.isDigit(e.getKeyChar())) {
+                    e.consume();
+                }
+            }
+        });
+        add(cardTextField);
 
         JLabel pinLabel = new JLabel("PIN:");
-        pinLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        centerPanel.add(pinLabel, gbc);
+        pinLabel.setFont(new Font("Raleway", Font.BOLD, 28));
+        pinLabel.setBounds(100, 220, 200, 40);
+        add(pinLabel);
 
-        pinField = new JPasswordField();
-        pinField.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        pinField.setPreferredSize(new Dimension(200, 40));
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        centerPanel.add(pinField, gbc);
+        pinTextField = new JPasswordField();
+        pinTextField.setBounds(300, 220, 200, 30);
+        pinTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent e) {
+                if (pinTextField.getPassword().length >= 4 || !Character.isDigit(e.getKeyChar())) {
+                    e.consume();
+                }
+            }
+        });
+        add(pinTextField);
 
-        add(centerPanel, BorderLayout.CENTER);
+        loginButton = new JButton("LOGIN");
+        loginButton.setBounds(200, 300, 100, 30);
+        loginButton.setBackground(Color.BLACK);
+        loginButton.setForeground(Color.WHITE);
+        loginButton.setOpaque(true);
+        loginButton.setBorderPainted(false);
+        loginButton.addActionListener(this);
+        add(loginButton);
 
-        // Bottom panel for buttons
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setBackground(new Color(240, 248, 255)); // Match background
-        loginButton = new JButton("Login");
-        exitButton = new JButton("Exit");
+        clearButton = new JButton("CLEAR");
+        clearButton.setBounds(320, 300, 100, 30);
+        clearButton.setBackground(Color.BLACK);
+        clearButton.setForeground(Color.WHITE);
+        clearButton.setOpaque(true);
+        clearButton.setBorderPainted(false);
+        clearButton.addActionListener(this);
+        add(clearButton);
 
-        loginButton.setFont(new Font("SansSerif", Font.BOLD, 16));
-        exitButton.setFont(new Font("SansSerif", Font.BOLD, 16));
-        loginButton.setPreferredSize(new Dimension(120, 40));
-        exitButton.setPreferredSize(new Dimension(120, 40));
+        exitButton = new JButton("EXIT");
+        exitButton.setBounds(440, 300, 100, 30);
+        exitButton.setBackground(Color.RED);
+        exitButton.setForeground(Color.WHITE);
+        exitButton.setOpaque(true);
+        exitButton.setBorderPainted(false);
+        exitButton.addActionListener(this);
+        add(exitButton);
 
-        bottomPanel.add(loginButton);
-        bottomPanel.add(exitButton);
-
-        add(bottomPanel, BorderLayout.SOUTH);
-
-        // Action Listeners
-        loginButton.addActionListener(new LoginButtonListener());
-        exitButton.addActionListener(e -> System.exit(0));
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(650, 420);
+        setLocation(350, 200);
+        setVisible(true);
     }
 
-
-    private class LoginButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            String accountNumber = accountNumberField.getText();
-            String pin = new String(pinField.getPassword());
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == clearButton) {
+            cardTextField.setText("");
+            pinTextField.setText("");
+        } else if (e.getSource() == loginButton) {
+            String accountNumber = cardTextField.getText();
+            String pin = new String(pinTextField.getPassword());
 
             boolean success = atmController.login(accountNumber, pin);
 
             if (success) {
-                dispose(); // Close login window
-                new MainMenuScreen(atmController).setVisible(true); // Pass atmController to Main Menu
-            }
-         else {
+                dispose();
+                new MainMenuScreen(atmController).setVisible(true);
+            } else {
                 JOptionPane.showMessageDialog(null, "Login Failed! Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
             }
+        } else if (e.getSource() == exitButton) {
+            System.exit(0);
         }
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            LoginScreen loginScreen = new LoginScreen();
-            loginScreen.setVisible(true);
-        });
+        SwingUtilities.invokeLater(LoginScreen::new);
     }
 }
