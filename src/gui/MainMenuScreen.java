@@ -20,7 +20,7 @@ public class MainMenuScreen extends JFrame implements ActionListener {
     }
 
     private void initializeUI() {
-        setTitle("A.T.M.");
+        setTitle("ATM");
         setSize(900, 900);
         setLocation(300, 0);
         setLayout(null);
@@ -60,14 +60,31 @@ public class MainMenuScreen extends JFrame implements ActionListener {
         setVisible(true);
     }
 
+    ImageIcon rawBalance = new ImageIcon(ClassLoader.getSystemResource("icons/balance.png"));
+    Image scBalance = rawBalance.getImage().getScaledInstance(50,50, Image.SCALE_SMOOTH);
+    ImageIcon balanceIcon = new ImageIcon(scBalance);
+
+    ImageIcon rawPin = new ImageIcon(ClassLoader.getSystemResource("icons/pin.png"));
+    Image scPin = rawPin.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+    ImageIcon pinIcon = new ImageIcon(scPin);
+
+    ImageIcon rawReceipt = new ImageIcon(ClassLoader.getSystemResource("icons/receipt.png"));
+    Image scReceipt = rawReceipt.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+    ImageIcon receiptIcon = new ImageIcon(scReceipt);
+
+    ImageIcon rawError = new ImageIcon(ClassLoader.getSystemResource("icons/error.png"));
+    Image scError = rawError.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+    ImageIcon errorIcon = new ImageIcon(scError);
+
     @Override
     public void actionPerformed(ActionEvent e) {
+
         if (e.getSource() == checkBalanceButton) {
             double balance = atmController.getBalance();
-            JOptionPane.showMessageDialog(this, "Your Current Balance: $" + balance);
+            JOptionPane.showMessageDialog(this, "Your Current Balance: $" + balance,"Balance", JOptionPane.INFORMATION_MESSAGE, balanceIcon);
 
         } else if (e.getSource() == depositButton) {
-            String amountStr = JOptionPane.showInputDialog(this, "Enter amount to deposit:");
+            String amountStr = (String) JOptionPane.showInputDialog(this, "Enter amount to deposit:", "Deposit", JOptionPane.INFORMATION_MESSAGE, balanceIcon, null, null);
             if (amountStr != null) {
                 try {
                     double amount = Double.parseDouble(amountStr);
@@ -76,12 +93,12 @@ public class MainMenuScreen extends JFrame implements ActionListener {
                         showTransactionReceipt("Deposit", amount, atmController.getCurrentAccountNumber(), null);
                     }
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(this, "Invalid amount!", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Invalid amount!", "Error", JOptionPane.ERROR_MESSAGE,errorIcon);
                 }
             }
 
         } else if (e.getSource() == withdrawButton) {
-            String amountStr = JOptionPane.showInputDialog(this, "Enter amount to withdraw:");
+            String amountStr = (String) JOptionPane.showInputDialog(this, "Enter amount to withdraw:","Withdraw",JOptionPane.INFORMATION_MESSAGE,balanceIcon,null,null);
             if (amountStr != null) {
                 try {
                     double amount = Double.parseDouble(amountStr);
@@ -90,13 +107,13 @@ public class MainMenuScreen extends JFrame implements ActionListener {
                         showTransactionReceipt("Withdraw", amount, atmController.getCurrentAccountNumber(), null);
                     }
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(this, "Invalid amount!", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Invalid amount!", "Error", JOptionPane.ERROR_MESSAGE, errorIcon);
                 }
             }
 
         } else if (e.getSource() == transferButton) {
-            String toAccount = JOptionPane.showInputDialog(this, "Enter destination account number:");
-            String amountStr = JOptionPane.showInputDialog(this, "Enter amount to transfer:");
+            String toAccount = (String) JOptionPane.showInputDialog(this, "Enter destination account number:","To Account", JOptionPane.INFORMATION_MESSAGE,balanceIcon,null,null);
+            String amountStr = (String) JOptionPane.showInputDialog(this, "Enter amount to transfer:", "Amount", JOptionPane.INFORMATION_MESSAGE,balanceIcon,null,null);
             if (toAccount != null && amountStr != null) {
                 try {
                     double amount = Double.parseDouble(amountStr);
@@ -105,31 +122,31 @@ public class MainMenuScreen extends JFrame implements ActionListener {
                         showTransactionReceipt("Transfer", amount, atmController.getCurrentAccountNumber(), toAccount);
                     }
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(this, "Invalid amount!", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Invalid amount!", "Error", JOptionPane.ERROR_MESSAGE, errorIcon);
                 }
             }
 
         } else if (e.getSource() == changePinButton) {
-            String oldPin = JOptionPane.showInputDialog(this, "Enter your current PIN:");
-            String newPin = JOptionPane.showInputDialog(this, "Enter your new PIN:");
+            String oldPin = (String) JOptionPane.showInputDialog(this, "Enter your current PIN:","Old PIN",JOptionPane.INFORMATION_MESSAGE,pinIcon,null,null);
+            String newPin = (String) JOptionPane.showInputDialog(this, "Enter your new PIN:","New PIN",JOptionPane.INFORMATION_MESSAGE,pinIcon,null,null);
 
             if (oldPin != null && newPin != null) {
                 boolean success = atmController.changePin(oldPin, newPin);
                 if (success) {
-                    JOptionPane.showMessageDialog(this, "PIN changed successfully! Please re-login.");
+                    JOptionPane.showMessageDialog(this, "PIN changed successfully! Please re-login.","PIN Changed", JOptionPane.INFORMATION_MESSAGE,pinIcon);
                     atmController.saveAccounts();
                     atmController.logout();
                     dispose();
                     new LoginScreen().setVisible(true);
                 } else {
-                    JOptionPane.showMessageDialog(this, "Incorrect old PIN.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Incorrect old PIN.", "Error", JOptionPane.ERROR_MESSAGE, errorIcon);
                 }
             }
 
         } else if (e.getSource() == transactionHistoryButton) {
             List<Transaction> history = atmController.getCurrentTransactionHistory();
             if (history.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "No transactions this session.");
+                JOptionPane.showMessageDialog(this, "No transactions this session.","No Transactions", JOptionPane.ERROR_MESSAGE, errorIcon);
             } else {
                 StringBuilder sb = new StringBuilder("🧾 Transaction History 🧾\n\n");
                 for (Transaction t : history) {
@@ -142,11 +159,11 @@ public class MainMenuScreen extends JFrame implements ActionListener {
                     }
                     sb.append("-----\n");
                 }
-                JOptionPane.showMessageDialog(this, sb.toString(), "Session Transaction History", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, sb.toString(), "Session Transaction History", JOptionPane.INFORMATION_MESSAGE,receiptIcon);
             }
 
         } else if (e.getSource() == logoutButton) {
-            JOptionPane.showMessageDialog(this, "Thank you for using our ATM!");
+            JOptionPane.showMessageDialog(this, "Thank you for using our ATM!","Logged Out..",JOptionPane.INFORMATION_MESSAGE,balanceIcon);
             setVisible(false);
             new LoginScreen().setVisible(true);
         }
@@ -166,11 +183,10 @@ public class MainMenuScreen extends JFrame implements ActionListener {
         receipt.append("------------------------------\n");
         receipt.append("🎉 Thank you for using our ATM!");
 
-        JOptionPane.showMessageDialog(this, receipt.toString(), "Transaction Receipt", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, receipt.toString(), "Transaction Receipt", JOptionPane.INFORMATION_MESSAGE,receiptIcon);
     }
 
     public static void main(String[] args) {
-        // for testing independently
         new MainMenuScreen(null);
     }
 }

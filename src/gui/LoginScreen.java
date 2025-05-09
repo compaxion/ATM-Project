@@ -41,19 +41,19 @@ public class LoginScreen extends JFrame implements ActionListener {
         label.setBounds(70, 10, 100, 100);
         add(label);
 
-        JLabel title = new JLabel("WELCOME TO ATM");
-        title.setFont(new Font("Osward", Font.BOLD, 38));
+        JLabel title = new JLabel("Welcome to ATM");
+        title.setFont(new Font("System",Font.PLAIN, 38));
         title.setBounds(200, 40, 400, 40);
         add(title);
 
         JLabel accountLabel = new JLabel("Account ID:");
-        accountLabel.setFont(new Font("Raleway", Font.BOLD, 28));
+        accountLabel.setFont(new Font("System", Font.PLAIN, 28));
         accountLabel.setBounds(100, 150, 200, 40);
         add(accountLabel);
 
         cardTextField = new JTextField();
-        cardTextField.setBounds(300, 150, 200, 30);
-        cardTextField.setFont(new Font("Arial", Font.BOLD, 14));
+        cardTextField.setBounds(300, 155, 200, 30);
+        cardTextField.setFont(new Font("System", Font.PLAIN, 14));
         cardTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent e) {
                 if (cardTextField.getText().length() >= 4 || !Character.isDigit(e.getKeyChar())) {
@@ -64,12 +64,12 @@ public class LoginScreen extends JFrame implements ActionListener {
         add(cardTextField);
 
         JLabel pinLabel = new JLabel("PIN:");
-        pinLabel.setFont(new Font("Raleway", Font.BOLD, 28));
+        pinLabel.setFont(new Font("System", Font.PLAIN, 28));
         pinLabel.setBounds(100, 220, 200, 40);
         add(pinLabel);
 
         pinTextField = new JPasswordField();
-        pinTextField.setBounds(300, 220, 200, 30);
+        pinTextField.setBounds(300, 225, 200, 30);
         pinTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent e) {
                 if (pinTextField.getPassword().length >= 4 || !Character.isDigit(e.getKeyChar())) {
@@ -79,7 +79,7 @@ public class LoginScreen extends JFrame implements ActionListener {
         });
         add(pinTextField);
 
-        loginButton = new JButton("LOGIN");
+        loginButton = new JButton("Login");
         loginButton.setBounds(200, 300, 100, 30);
         loginButton.setBackground(Color.BLACK);
         loginButton.setForeground(Color.WHITE);
@@ -88,7 +88,7 @@ public class LoginScreen extends JFrame implements ActionListener {
         loginButton.addActionListener(this);
         add(loginButton);
 
-        clearButton = new JButton("CLEAR");
+        clearButton = new JButton("Clear");
         clearButton.setBounds(320, 300, 100, 30);
         clearButton.setBackground(Color.BLACK);
         clearButton.setForeground(Color.WHITE);
@@ -97,7 +97,7 @@ public class LoginScreen extends JFrame implements ActionListener {
         clearButton.addActionListener(this);
         add(clearButton);
 
-        exitButton = new JButton("EXIT");
+        exitButton = new JButton("Exit");
         exitButton.setBounds(440, 300, 100, 30);
         exitButton.setBackground(Color.RED);
         exitButton.setForeground(Color.WHITE);
